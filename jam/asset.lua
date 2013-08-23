@@ -1,3 +1,7 @@
+local component = require("jam.component")
+local entity = require("jam.entity")
+local sandbox = require("jam.sandbox")
+
 local PATH = "game/"
 
 local M = {}
@@ -12,20 +16,33 @@ end
 -- TODO: use coroutines to not block on loading?
 
 --- Load an asset.
-M.load = function (name)
-  local dir = findPattern(name, "^[^/]+")
+M.load = function (filename)
+  if assets[filename] then return end
+  local dir = findPattern(filename, "^[^/]+")
   local loader = assert(loaders[dir],
-    "loading: " .. name .. ": no loader for directory: " .. dir
+    "loading: " .. filename .. ": no loader for directory: " .. dir
   )
-  assets[name] = loader(PATH .. name)
+  assets[filename] = loader(PATH .. filename)
+end
+
+-- Load all assets in a directory.
+M.loadDir = function (dir)
+  local files = love.filesystem.enumerate(PATH .. dir)
+  for _, file in ipairs(files) do
+    if love.filesystem.isFile(PATH .. dir .. file) then
+      M.load(dir .. file)  
+    elseif love.filesystem.isDirectory(PATH .. dir .. file) then
+      M.loadDir(dir .. file)
+    end
+  end
 end
 
 --- Get an asset.
-M.get = function (name)
-  if assets[name] == nil then
-    M.load(name)
+M.get = function (filename)
+  if assets[filename] == nil then
+    M.load(filename)
   end
-  return assets[name]
+  return assets[filename]
 end
 
 --- Set loader for files within a given directory.
@@ -41,6 +58,30 @@ end)
 M.setLoader("music", function (x)
   return love.audio.newSource(x, "stream")
 end)
-M.setLoader("entity", love.filesystem.load)
+M.setLoader("entity", function (x)
+  local t = string.sub(findPattern(x, "[^/.]+[.]"), 1, -2)
+  local f = love.filesystem.load(x)
+  f = sandbox.new(f, {
+    asset = M,
+    component = component,
+  })
+  entity.register(t, f)
+  return true
+end)
+M.setLoader("component", function (x)
+  local t = string.sub(findPattern(x, "[^/.]+[.]"), 1, -2)
+  local f = love.filesystem.load(x)
+  f = sandbox.new(f, {})
+  component.register(t, f)
+  return true
+end)
+M.setLoader("system", function (x)
+  local f = love.filesystem.load(x)
+  f = sandbox.new(f, {})
+  system.register(f)
+  return true
+end)
+M.setLoader("map", love.filesystem.load)
 
 return M
+

@@ -3,14 +3,13 @@ local scene = require("jam.scene")
 local M = {}
 
 local nextId = 1
-local templates = {}
+local types = {}
 
---- Add a new template constructor
--- @param type (string) The name of the template
+--- Register a new type constructor
+-- @param type (string) The name of the type
 -- @parm f (function) The constructor to call (signature f(entity, args))
--- @see build
-M.addTemplate = function (type, f)
-  templates[type] = f
+M.register = function (type, f)
+  types[type] = f
 end
 
 ---Construct an entity from a template
@@ -18,13 +17,10 @@ end
 -- @param args (table) The template-specific arguments
 -- @return (table) The constructed entity
 M.build = function (type, args)
-  local template = templates[type]
+  local f = types[type]
+  assert(f, "unknown entity type: " .. type)
   local e = M.new()
-  if template ~= nil then
-    template(e, args)
-  else
-    error("unknown entity template: " .. type)
-  end
+  e = f(e, args)
   return e
 end
 
@@ -39,10 +35,5 @@ M.new = function ()
   return entity
 end
 
---- Update the entity manager.
--- @param dt (number) Time delta in seconds.
-M.update = function (dt)
-  
-end
-
 return M
+

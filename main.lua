@@ -16,41 +16,15 @@ control.bind = {
 }
 
 love.load = function ()
+  asset.loadDir("component/")
+  asset.loadDir("entity/")
+  asset.loadDir("system/")
   love.graphics.setMode(800,600, false)
   local img = asset.get("image/Player/p1_spritesheet.png")
   local w = img:getWidth()
   local h = img:getHeight()
-  local e = entity.new()
-  scene.addEntity(e)
-  e.pos = {x=0,y=0}
-  e.sprite = {
-    image = img,
-    quad = love.graphics.newQuad(67, 196, 66, 92, w, h),
-  }
-  e.anim = {
-    t = 0,
-    frame = 1,
-    playing = "walk",
-    anims = {
-      stand = {
-        { x = 67, y = 196, w = 66, h = 92 },
-      },
-      walk = {
-        after = "stand",
-        { x = 0, y = 0, w = 72, h = 97, t = .1 },
-        { x = 73, y = 0, w = 72, h = 97, t = .1 },
-        { x = 146, y = 0, w = 72, h = 97, t = .1 },
-        { x = 0, y = 98, w = 72, h = 97, t = .1 },
-        { x = 73, y = 98, w = 72, h = 97, t = .1 },
-        { x = 146, y = 98, w = 72, h = 97, t = .1 },
-        { x = 219, y = 0, w = 72, h = 97, t = .1 },
-        { x = 292, y = 0, w = 72, h = 97, t = .1 },
-        { x = 219, y = 98, w = 72, h = 97, t = .1 },
-        { x = 365, y = 0, w = 72, h = 97, t = .1 },
-        { x = 219, y = 98, w = 72, h = 97, t = .1 },
-      },
-    }
-  }
+  --local e = entity.build("test", { x = 0, y = 0 })
+  --scene.addEntity(e)
   
   local e2 = entity.new()
   scene.addEntity(e2)

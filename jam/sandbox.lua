@@ -3,7 +3,8 @@ local M = {}
 M.new = function (f, env)
   return function ()
     setfenv(f, env)
-    return pcall(f)
+    local _, s = assert(pcall(f))
+    return s
   end
 end
 
