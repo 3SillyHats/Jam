@@ -17,7 +17,7 @@ control.bind = {
 
 love.load = function ()
   love.graphics.setMode(800,600, false)
-  local img = asset.get("img/Player/p1_spritesheet.png")
+  local img = asset.get("image/Player/p1_spritesheet.png")
   local w = img:getWidth()
   local h = img:getHeight()
   local e = entity.new()

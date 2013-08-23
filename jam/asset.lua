@@ -1,3 +1,5 @@
+local PATH = "game/"
+
 local M = {}
 
 local assets = {}
@@ -11,11 +13,11 @@ end
 
 --- Load an asset.
 M.load = function (name)
-  local extension = findPattern(name, "[.][^/]+$")
-  local loader = assert(loaders[extension],
-    "loading: " .. name .. ": no loader for " .. extension .. " files"
+  local dir = findPattern(name, "^[^/]+")
+  local loader = assert(loaders[dir],
+    "loading: " .. name .. ": no loader for directory: " .. dir
   )
-  assets[name] = loader(name)
+  assets[name] = loader(PATH .. name)
 end
 
 --- Get an asset.
@@ -26,19 +28,19 @@ M.get = function (name)
   return assets[name]
 end
 
---- Set loader for files with a given extension.
-M.setLoader = function (extension, loader)
-  loaders[extension] = loader
+--- Set loader for files within a given directory.
+M.setLoader = function (dir, loader)
+  loaders[dir] = loader
 end
 
 -- Set default asset loaders.
-M.setLoader(".lua", love.filesystem.load)
-M.setLoader(".png", love.graphics.newImage)
-M.setLoader(".wav", function (x)
+M.setLoader("image", love.graphics.newImage)
+M.setLoader("sound", function (x)
   return love.audio.newSource(x, "static")
 end)
-M.setLoader(".ogg", function (x)
+M.setLoader("music", function (x)
   return love.audio.newSource(x, "stream")
 end)
+M.setLoader("entity", love.filesystem.load)
 
 return M

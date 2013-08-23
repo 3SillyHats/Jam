@@ -1,7 +1,5 @@
 local M = {}
 
-system.add(M)
-
 local parseProperty = function (val)
   if val == "true" then
     return true
@@ -161,3 +159,4 @@ M.new = function (data)
 end
 
 return M
+
