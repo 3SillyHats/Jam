@@ -1,0 +1,20 @@
+love.conf = function (t)
+  t.title = "Burgled"
+  t.author = "3 Silly Hats"
+  t.url = nil
+  t.identity = "burgled"
+  t.version = "0.8.0"
+  t.console = false
+  t.release = false
+  t.screen = false
+  t.modules.joystick = true
+  t.modules.audio = true
+  t.modules.keyboard = true
+  t.modules.event = true
+  t.modules.image = true
+  t.modules.graphics = true
+  t.modules.timer = true
+  t.modules.mouse = true
+  t.modules.sound = true
+  t.modules.physics = true
+end
